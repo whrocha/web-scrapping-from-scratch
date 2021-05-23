@@ -1,0 +1,1 @@
+# TODO: API will return the url, if not exists will generate que metrics and insert without the apperences

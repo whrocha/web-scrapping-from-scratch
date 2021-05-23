@@ -2,20 +2,15 @@ import logging
 
 from crawler import Crawler
 from url_metrics import UrlMetrics
-from database import  Database
 
-MAXIMUM_DEGREE_DEPTH = 5
+MAXIMUM_DEGREE_DEPTH = 10
 
 
 def lambda_handler(event, context):
 
     logging.info(event)
     logging.info(context)
-
-    # TODO: get from dynamodbTable
-    db = Database()
-    print(db.get_items())
-    
+       
     _urls = ['https://scrapethissite.com/', 'http://www.example.com/']
 
     logging.info('Processing urls')

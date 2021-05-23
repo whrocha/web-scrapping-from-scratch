@@ -1,9 +1,10 @@
 import logging
 import json
 import requests
+import database
 
 from bs4 import BeautifulSoup
-
+# from model import TableUrlCrawler
 
 class UrlMetrics():
 
@@ -12,6 +13,8 @@ class UrlMetrics():
         self.rows = []
 
     def generate_metrics(self):
+
+        logging.info('Generating metrics')
 
         with open('/tmp/items.jl') as f:
 
@@ -67,6 +70,7 @@ class UrlMetrics():
             
             i += 1
 
-        # TODO: save url to dynamodb
+        # Save data to dynamodb table
+        logging.info('Saving metrics to database')
         
-        print(self.rows)
+        database.save(rows)
