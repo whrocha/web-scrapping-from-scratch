@@ -30,14 +30,15 @@ Resources:
     # Tables
     #
 
-    TableOutLinks:
+    TableUrlCrawler:
         Type: AWS::DynamoDB::Table
         Properties:
+            TableName: table-url-crawler
             AttributeDefinitions:
                 - AttributeName: link
                   AttributeType: S
                 - AttributeName: appearences
-                  AttributeType: N    
+                  AttributeType: S
             KeySchema:
                 - AttributeName: link
                   KeyType: HASH
