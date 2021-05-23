@@ -5,21 +5,32 @@ import json
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 
-logging.basicConfig(
-    format='%(asctime)s %(levelname)s:%(message)s',
-    level=logging.INFO)
-
 
 class Crawler:
 
-    def __init__(self, urls=[]):
+    logging.basicConfig(
+    format='%(asctime)s %(levelname)s:%(message)s',
+    level=logging.INFO)
 
+    def __init__(self, urls=[], maximum_degree_depth=None):
+
+        # visited urls
         self.visited_urls = []
-        self.urls = []
-        self.urls_to_visit = urls
-        self.MAXIMUM_DEGREE_DEPTH = 20
 
-    def get_linked_urls(self, url, html):
+        # all urls loaded
+        self.urls = []
+
+        # urls to scrawl
+        self.urls_to_visit = urls
+
+        # max degree depth
+        if maximum_degree_depth != None:
+
+            maximum_degree_depth = maximum_degree_depth * len(urls)
+
+        self.MAXIMUM_DEGREE_DEPTH = maximum_degree_depth
+
+    def __get_linked_urls(self, url, html):
         """Get linked URLs from URL"""
 
         soup = BeautifulSoup(html, 'html.parser')
@@ -32,14 +43,14 @@ class Crawler:
 
             yield path
 
-    def add_url_to_visit(self, url):
+    def __add_url_to_visit(self, url):
         """Add url to visited urls"""
 
         if url not in self.visited_urls and url not in self.urls_to_visit:
 
             self.urls_to_visit.append(url)
 
-    def crawl(self, url):
+    def __crawl(self, url):
         """Crawl url"""
 
         html = requests.get(url).text
@@ -49,36 +60,36 @@ class Crawler:
         dict_url['content'] = html
         self.urls.append(dict_url)
 
-        for url in self.get_linked_urls(url, html):
+        for url in self.__get_linked_urls(url, html):
 
-            self.add_url_to_visit(url)
+            self.__add_url_to_visit(url)
 
     def run(self):
         """Run crawler""" 
 
         self.depth = 0
 
-        while self.urls_to_visit and self.depth <= self.MAXIMUM_DEGREE_DEPTH:
+        while self.urls_to_visit and (self.depth <= self.MAXIMUM_DEGREE_DEPTH or self.MAXIMUM_DEGREE_DEPTH == None):
 
             url = self.urls_to_visit.pop(0)
             logging.info(f'Crawling: {url}')
 
             try:
 
-                self.crawl(url)
+                self.__crawl(url)
 
             except Exception:
 
-                logging.exception(f'Failed to crawl: {url}')
+                logging.error(f'Failed to crawl: {url}')
 
             finally:
 
                 self.visited_urls.append(url)
                 self.depth += 1
 
-        self.process_items()
+        self.__process_items()
 
-    def process_items(self):
+    def __process_items(self):
         """Process extracted items to find appearences"""
 
         logging.info('Processing extracted links')
@@ -98,7 +109,7 @@ class Crawler:
 
             rows.append(line_item)
 
-        with open('items.jl', 'w') as f:
+        with open('/tmp/items.jl', 'w') as f:
             
             for row in rows:
 
@@ -110,8 +121,3 @@ class Crawler:
                 row_copy.pop('links', None)
 
                 f.write(json.dumps(row_copy) + "\n")
-
-
-if __name__ == '__main__':
-
-    Crawler(urls=['https://scrapethissite.com/']).run()

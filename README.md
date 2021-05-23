@@ -125,6 +125,31 @@ Check items file in [items.jl](./items.jl)
 
 Go to [Jupyter Notebook](./vector-analytics.ipynb) to see the Results.
 
+### API
+
+#### About SAM
+
+AWS SAM provides you with a command line tool, the AWS SAM CLI, that makes it easy for you to create and manage serverless applications. You need to install and configure a few things in order to use the AWS SAM CLI.
+
+[Install SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+
+**Homebrew**
+
+To install the AWS SAM CLI using Homebrew, run the following commands:
+
+```
+brew tap aws/tap
+brew install aws-sam-cli
+```
+
+Verify the installation.
+
+```
+sam --version
+Homebrew 3.1.8
+Homebrew/homebrew-core (git revision 94d77888152; last commit 2021-05-22)
+```
+
 ### TO-DO List
 
 - Build the challenge REST API.
