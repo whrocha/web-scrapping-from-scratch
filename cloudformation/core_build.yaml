@@ -48,5 +48,5 @@ Resources:
 Outputs:
 
     ArtifactStoreBucket:
-        Description: 'Artifacts Store Bucket'
+        Description: 'Artifacts Store Bucket.'
         Value: !Ref ArtifactStore
