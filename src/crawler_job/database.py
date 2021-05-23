@@ -11,7 +11,7 @@ class TableUrlCrawler(Model):
             table_name = 'table-url-crawler'
 
         link = UnicodeAttribute(hash_key=True)
-        appearences = UnicodeAttribute(range_key=True)
+        appearences = NumberAttribute(default=0)
         qty_character_url = NumberAttribute(default=0)
         qty_character_page_title = NumberAttribute(default=0)
         qty_page_http_links = NumberAttribute(default=0)
@@ -34,7 +34,7 @@ def save(rows):
 
         table_url_crawler = TableUrlCrawler()
         table_url_crawler.link = link
-        table_url_crawler.appearences  = str(row['appearences'])
+        table_url_crawler.appearences  = row['appearences']
         table_url_crawler.qty_character_url = int(row['qty_character_url'])
         table_url_crawler.qty_character_page_title = row['qty_character_page_title']
         table_url_crawler.qty_page_http_links = row['qty_page_http_links']

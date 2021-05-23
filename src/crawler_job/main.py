@@ -5,17 +5,16 @@ from url_metrics import UrlMetrics
 
 MAXIMUM_DEGREE_DEPTH = 10
 
+URLS = [
+    'https://scrapethissite.com/',
+    'http://www.example.com/',
+]
 
-def lambda_handler(event, context):
-
-    logging.info(event)
-    logging.info(context)
-       
-    _urls = ['https://scrapethissite.com/', 'http://www.example.com/']
+def run_crawler():
 
     logging.info('Processing urls')
 
-    Crawler(urls=_urls, maximum_degree_depth = MAXIMUM_DEGREE_DEPTH).run()
+    Crawler(urls=URLS, maximum_degree_depth = MAXIMUM_DEGREE_DEPTH).run()
 
     # Load json lines to a dict-list
     logging.info('Processing url metrics')
@@ -25,4 +24,4 @@ def lambda_handler(event, context):
 
 if __name__ == '__main__':
 
-    lambda_handler({}, {})
+    run_crawler()

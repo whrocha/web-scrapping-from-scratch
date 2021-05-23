@@ -10,7 +10,7 @@ Parameters:
 
     Name:
         Type: String
-        Default: web-scrapping
+        Default: api-web-scrapping
 
     Project:
         Type: String
@@ -37,29 +37,25 @@ Resources:
             AttributeDefinitions:
                 - AttributeName: link
                   AttributeType: S
-                - AttributeName: appearences
-                  AttributeType: S
             KeySchema:
                 - AttributeName: link
                   KeyType: HASH
-                - AttributeName: appearences
-                  KeyType: RANGE
             BillingMode: PAY_PER_REQUEST
 
     #
     # Functions
     #
     
-    ##### Crawler ####
+    ##### API ####
 
     # Lambda Layer
-    RuntimeDependenciesLayerCrawler:
+    RuntimeDependenciesLayerAPICrawler:
         Type: AWS::Serverless::LayerVersion
         Metadata:
             BuildMethod: makefile
         Properties:
             Description: Runtime dependencies for Lambdas
-            ContentUri: ../src/crawler_job
+            ContentUri: ../src/api
             CompatibleRuntimes:
                 - python3.7
             RetentionPolicy: Delete
@@ -68,18 +64,19 @@ Resources:
     WebScrappingCrawler:
         Type: AWS::Serverless::Function
         Properties:
-            FunctionName: !Sub ${Name}-crawler
+            FunctionName: !Sub ${Name}-api-crawler
             Handler: main.lambda_handler
             Runtime: python3.7
-            CodeUri: ../src/crawler_job
-            Description: Web Scrapping Lambda Crawler
+            CodeUri: ../src/api
+            Description: API Web Scrapping Lambda Crawler
             Timeout: 900
-            MemorySize: 3072
+            Policies: AmazonDynamoDBFullAccess
+            Environment:
+                Variables:
+                    TABLE_NAME: !Ref TableUrlCrawler
             Layers:
-                - !Ref RuntimeDependenciesLayerCrawler
+                - !Ref RuntimeDependenciesLayerAPICrawler
             Tags:
-                Name: !Sub ${Name}-crawler
+                Name: !Sub ${Name}-api-crawler
                 Project: !Ref Project
                 Environment: !Ref Environment
-
-    ##### API ####
