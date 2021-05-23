@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: 'Core Build Resources'
+
+Metadata: {}
+
+Parameters: {}
+
+Mappings: {}
+
+Conditions: {}
+
+Resources:
+
+    #
+    # Artifacts Store
+    #
+
+    ArtifactStore:
+        Type: AWS::S3::Bucket
+        DeletionPolicy: Retain
+        Properties:
+            BucketEncryption:
+                ServerSideEncryptionConfiguration:
+                  - ServerSideEncryptionByDefault:
+                        SSEAlgorithm: AES256
+            AccessControl: Private
+            PublicAccessBlockConfiguration:
+                BlockPublicAcls: True
+                BlockPublicPolicy: True
+                IgnorePublicAcls: True
+                RestrictPublicBuckets: True
+            VersioningConfiguration:
+                Status: Enabled
+            LifecycleConfiguration:
+                Rules:
+                  - Id: CleanupIncomplete
+                    Status: Enabled
+                    AbortIncompleteMultipartUpload:
+                        DaysAfterInitiation: 10
+                  - Id: CleanupCompletedVersions
+                    Status: Enabled
+                    NoncurrentVersionExpirationInDays: 10
+                  - Id: CleanupCompleted
+                    Status: Enabled
+                    ExpirationInDays: 10
+
+Outputs:
+
+    ArtifactStoreBucket:
+        Description: 'Artifacts Store Bucket'
+        Value: !Ref ArtifactStore
