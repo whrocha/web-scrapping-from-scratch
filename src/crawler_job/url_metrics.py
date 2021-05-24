@@ -16,7 +16,7 @@ class UrlMetrics():
 
         logging.info('Generating metrics')
 
-        with open('/tmp/items.jl') as f:
+        with open('./items.jl') as f:
 
             for line in f:
 

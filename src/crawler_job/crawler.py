@@ -109,7 +109,7 @@ class Crawler:
 
             rows.append(line_item)
 
-        with open('/tmp/items.jl', 'w') as f:
+        with open('./items.jl', 'w') as f:
             
             for row in rows:
 

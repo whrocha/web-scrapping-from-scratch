@@ -80,3 +80,27 @@ Resources:
                 Name: !Sub ${Name}-api-crawler
                 Project: !Ref Project
                 Environment: !Ref Environment
+            Events:
+                Crawler:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /crawler
+                        Method: get
+                        RequestParameters:
+                            - method.request.querystring.url:
+                                Required: true
+
+Outputs:
+
+    # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+    # Find out more about other implicit resources you can reference within SAM
+    # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+    CrawlerApi:
+        Description: "API Gateway endpoint URL"
+        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/crawler/"
+    WebScrappingCrawler:
+        Description: "WebScrappingCrawler Lambda Function ARN"
+        Value: !GetAtt WebScrappingCrawler.Arn
+    WebScrappingCrawlerIamRole:
+        Description: "Implicit IAM Role created for WebScrappingCrawler function"
+        Value: !GetAtt WebScrappingCrawlerRole.Arn
