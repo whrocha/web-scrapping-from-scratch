@@ -51,7 +51,7 @@ Finally, a REST API will be built such that it uses the defined storage and allo
 
 ## My Achievements
 
-I build the crawler from scratch, this crawler can be access in [crawler.py](./crawler.py) file.
+I build the crawler from scratch, this crawler can be access in [src/crawler_job/main.py](./src/crawler_job/main.py) file.
 
 **There are some warnings about this crawler script.**
 
@@ -62,13 +62,66 @@ I build the crawler from scratch, this crawler can be access in [crawler.py](./c
 
 All of this limitation could be solved by using Scrapy, I have an example of crawler using Scrapy that can be access [here](https://github.com/whrocha/web-scrapping-challenge).
 
-I don't built the REST API yet, but I created a Jupyter Notebook to analyse extracted links and to create Vectors.
+I build a Jupyter Notebook that analyse the crawler output.
 
-Jupyter Notebook can be access in [vector-analytics.ipynb](./vector-analytics.ipynb).
+Jupyter Notebook can be access in [src/crawler_job/vector-analytics.ipynb](./src/crawler_job/vector-analytics.ipynbvector-analytics.ipynb).
 
-### Run locally
+## Run Crawler and API
 
-To run this project locally.
+### Build Stack
+
+This project was built on top AWS, so you need to have a valid AWS Account to run this project.
+
+#### About SAM
+
+AWS SAM provides you with a command line tool, the AWS SAM CLI, that makes it easy for you to create and manage serverless applications. You need to install and configure a few things in order to use the AWS SAM CLI. [Install SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+
+**Homebrew**
+
+To install the AWS SAM CLI using Homebrew, run the following commands:
+
+```
+brew tap aws/tap
+brew install aws-sam-cli
+```
+
+Verify the installation.
+
+```
+sam --version
+Homebrew 3.1.8
+Homebrew/homebrew-core (git revision 94d77888152; last commit 2021-05-22)
+```
+
+#### Deploy stack
+
+To deploy this stack project go to [cloudformation/](./cloudformation/).
+
+Run
+
+```
+make deploy
+```
+
+If everything works fine you will have the following output
+
+![picture 4](images/90d4f34715c8419204cb09ff4fc62484bcbc76d43ebd260678ae1a7453b57062.png)
+
+**Save the CrawlerAPI endpoint URL it will be used to test the API Calls !!!**
+
+if you already clean-up your terminal, just run the command bellow in `cloudformation` folder
+
+```
+make deploy
+```
+
+And the de url API endpoint, in my example above is `https://m561ykwat5.execute-api.us-east-1.amazonaws.com/Prod/crawler/ `
+
+### Run Crawler
+
+The Crawler can be access in [src/crawler_job/](./src/crawler_job/)
+
+To run this project to the following
 
 **Create virtual environment**
 
@@ -91,65 +144,38 @@ pip install -r requirements.txt
 **Run crawler**
 
 ```
-python crawler.py
+python main.py
 ```
 
-The final output should be
+This Script will scrawl the URL and save in dynamodb previouslly deployed, to crawl others URLs just change the variable URLS in `main.py` script.
 
 ```
-2021-05-16 22:31:53,106 INFO:Crawling: https://scrapethissite.com/
-2021-05-16 22:31:53,973 INFO:Crawling: https://scrapethissite.com/
-2021-05-16 22:31:54,708 INFO:Crawling: https://scrapethissite.com/pages/
-2021-05-16 22:31:55,581 INFO:Crawling: https://scrapethissite.com/lessons/
-2021-05-16 22:31:57,456 INFO:Crawling: https://scrapethissite.com/faq/
-2021-05-16 22:31:58,287 INFO:Crawling: https://scrapethissite.com/login/
-2021-05-16 22:31:59,119 INFO:Crawling: https://scrapethissite.com/pages/
-2021-05-16 22:31:59,948 INFO:Crawling: https://scrapethissite.com/pages/simple/
-2021-05-16 22:32:02,796 INFO:Crawling: https://scrapethissite.com/pages/forms/
-2021-05-16 22:32:04,158 INFO:Crawling: https://scrapethissite.com/pages/ajax-javascript/
-2021-05-16 22:32:05,579 INFO:Crawling: https://scrapethissite.com/pages/frames/
-2021-05-16 22:32:06,629 INFO:Crawling: https://scrapethissite.com/pages/advanced/
-2021-05-16 22:32:07,594 INFO:Crawling: https://scrapethissite.com/lessons/
-2021-05-16 22:32:09,631 INFO:Crawling: https://gum.co/oLpqb?wanted=true
-2021-05-16 22:32:11,738 INFO:Crawling: https://gum.co/oLpqb/LASTCHANCE?wanted=true
-2021-05-16 22:32:13,434 INFO:Crawling: https://scrapethissite.com/faq/
-2021-05-16 22:32:14,297 INFO:Crawling: https://scrapethissite.com/robots.txt
-2021-05-16 22:32:14,781 INFO:Crawling: https://scrapethissite.com/login/
-2021-05-16 22:32:15,688 INFO:Crawling: https://peric.github.io/GetCountries/
-2021-05-16 22:32:16,347 INFO:Crawling: http://www.opensourcesports.com/hockey/
+URLS = [
+    'https://scrapethissite.com/',
+    'http://www.example.com/',
+]
 ```
 
-Check items file in [items.jl](./items.jl)  
+### Test API
 
-**Checking Results**
+You can test the API enpoint, in my example the url endpoint is `https://m561ykwat5.execute-api.us-east-1.amazonaws.com/Prod/crawler/`.
 
-Go to [Jupyter Notebook](./vector-analytics.ipynb) to see the Results.
-
-### API
-
-#### About SAM
-
-AWS SAM provides you with a command line tool, the AWS SAM CLI, that makes it easy for you to create and manage serverless applications. You need to install and configure a few things in order to use the AWS SAM CLI.
-
-[Install SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-
-**Homebrew**
-
-To install the AWS SAM CLI using Homebrew, run the following commands:
+The API call could be done using `curl`.
 
 ```
-brew tap aws/tap
-brew install aws-sam-cli
+curl https://m561ykwat5.execute-api.us-east-1.amazonaws.com/Prod/crawler/?url=https://www.iana.org/domains/example
+
+{"qty_bytes_response": {"N": "10350"}, "qty_page_http_links": {"N": "7"}, "qty_character_url": {"N": "36"}, "qty_h1_page": {"N": "1"}, "qty_page_internal_links": {"N": "61"}, "qty_total_table_tr": {"N": "16"}, "qty_total_table": {"N": "2"}, "qty_character_page_title": {"N": "36"}, "qty_total_table_td": {"N": "52"}, "link": {"S": "https://www.iana.org/domains/example"}, "appearences": {"N": "1"}, "qty_total_a": {"N": "68"}}
 ```
 
-Verify the installation.
+Or you can use the api_test script that could be find in [src/api_test](./src/api_test/)
+
+In `main.py` you can put your API endpoint URL and which URL you want to search, if the URL does not exists yet, it will just return the metrics related to url itself, for example the url characters quantity
 
 ```
-sam --version
-Homebrew 3.1.8
-Homebrew/homebrew-core (git revision 94d77888152; last commit 2021-05-22)
+python main.py
 ```
 
-### TO-DO List
+## Cloud Stack Diagram
 
-- Build the challenge REST API.
+![picture 5](images/cloud-diagram.png)
